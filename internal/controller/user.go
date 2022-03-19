@@ -6,13 +6,13 @@ import (
 	v1 "goframe-demo/api/v1"
 )
 
-var UserController = userController{}
+var User = cUser{}
 
-type userController struct {
+type cUser struct {
 }
 
 // Index 用户列表
-func (c *cHello) Index(ctx context.Context, req *v1.IndexReq) (res *v1.IndexRes, err error) {
+func (c *cUser) Index(ctx context.Context, req *v1.IndexReq) (res *v1.IndexRes, err error) {
 	db := g.DB()
 
 	all, err := db.Model("users").All()
@@ -27,7 +27,7 @@ func (c *cHello) Index(ctx context.Context, req *v1.IndexReq) (res *v1.IndexRes,
 	return
 }
 
-func (c *cHello) Show(ctx context.Context, req *v1.ShowReq) (res *v1.ShowRes, err error) {
+func (c *cUser) Show(ctx context.Context, req *v1.ShowReq) (res *v1.ShowRes, err error) {
 	ctx.Value("id")
 
 	db := g.DB()
@@ -44,7 +44,7 @@ func (c *cHello) Show(ctx context.Context, req *v1.ShowReq) (res *v1.ShowRes, er
 }
 
 // Create 创建用户
-func (c userController) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
+func (c *cUser) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
 	data := g.Map{"name": req.Name, "age": req.Age, "email": req.Email}
 	db := g.DB()
 	_, err = db.Model("users").Data(data).Insert()
@@ -58,7 +58,7 @@ func (c userController) Create(ctx context.Context, req *v1.CreateReq) (res *v1.
 	return
 }
 
-func (c *cHello) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error) {
+func (c *cUser) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error) {
 	db := g.DB()
 	all, err := db.Model("users").Data("name", "嘿嘿嘿").Where("id", 1).Update()
 	if err != nil {
@@ -68,7 +68,7 @@ func (c *cHello) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateR
 	return
 }
 
-func (c *cHello) Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error) {
+func (c *cUser) Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error) {
 	db := g.DB()
 	id := req.Id
 	result, err := db.Model("users").Delete("id", id)
