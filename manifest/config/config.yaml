@@ -6,7 +6,7 @@ server:
 database:
   default:
     type:  "mysql"
-    link:  "root:root@tcp(127.0.0.1:3306)/gorm"
+    link:  "goframe:CE335yBMB28rCD4P@tcp(152.136.193.22:3306)/goframe"
 
 logger:
   level : "all"
