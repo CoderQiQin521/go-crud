@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gogf/gf/v2/frame/g"
 	v1 "goframe-demo/api/v1"
+	"goframe-demo/internal/service"
 )
 
 var User = cUser{}
@@ -13,17 +14,19 @@ type cUser struct {
 
 // Index 用户列表
 func (c *cUser) Index(ctx context.Context, req *v1.IndexReq) (res *v1.IndexRes, err error) {
-	db := g.DB()
-
-	all, err := db.Model("users").All()
+	all, err := service.User().GetList(ctx)
 	if err != nil {
-		return nil, err
+		return
 	}
+	res = &v1.IndexRes{
+		Result: all,
+	}
+	return
+}
 
-	g.RequestFromCtx(ctx).Response.Writeln(v1.Res{
-		Code:    200,
-		Message: "success",
-		Data:    all})
+// Create 创建用户
+func (c *cUser) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
+	err = service.User().CreateUser(ctx, req.Name, req.Email)
 	return
 }
 
@@ -40,21 +43,6 @@ func (c *cUser) Show(ctx context.Context, req *v1.ShowReq) (res *v1.ShowRes, err
 		Code:    200,
 		Message: "success",
 		Data:    one})
-	return
-}
-
-// Create 创建用户
-func (c *cUser) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
-	data := g.Map{"name": req.Name, "age": req.Age, "email": req.Email}
-	db := g.DB()
-	_, err = db.Model("users").Data(data).Insert()
-	if err != nil {
-		return nil, err
-	}
-	g.RequestFromCtx(ctx).Response.Writeln(v1.Res{
-		Code:    200,
-		Message: "success",
-		Data:    data})
 	return
 }
 

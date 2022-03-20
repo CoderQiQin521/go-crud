@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -15,8 +16,7 @@ type IndexReq struct {
 }
 
 type IndexRes struct {
-	Res
-	g.Meta `mime:"application/json" example:"[{"id": 1,"name": "张三","age": 22,"email": "zhang@qq.com"},{"id": 2,"name": "李四","age": 23,"email": "lisi@qq.com"}]"`
+	gdb.Result `json:"result"`
 }
 
 type ShowReq struct {
@@ -45,8 +45,6 @@ type CreateReq struct {
 }
 
 type CreateRes struct {
-	Res
-	g.Meta `mime:"application/json" example:"成功"`
 }
 
 type DeleteReq struct {
