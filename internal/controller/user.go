@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gogf/gf/v2/frame/g"
 	v1 "goframe-demo/api/v1"
+	"goframe-demo/internal/model"
 	"goframe-demo/internal/service"
 )
 
@@ -16,8 +17,9 @@ type cUser struct {
 func (c *cUser) Index(ctx context.Context, req *v1.IndexReq) (res *v1.IndexRes, err error) {
 	all, err := service.User().GetList(ctx)
 	if err != nil {
-		return
+		return nil, err
 	}
+	//res = &all
 	res = &v1.IndexRes{
 		Result: all,
 	}
@@ -26,23 +28,27 @@ func (c *cUser) Index(ctx context.Context, req *v1.IndexReq) (res *v1.IndexRes, 
 
 // Create 创建用户
 func (c *cUser) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
-	err = service.User().CreateUser(ctx, req.Name, req.Email)
+	data := model.CreateUserInput{
+		Name:  req.Name,
+		Email: req.Email,
+	}
+	err = service.User().CreateUser(ctx, data)
 	return
 }
 
 func (c *cUser) Show(ctx context.Context, req *v1.ShowReq) (res *v1.ShowRes, err error) {
-	ctx.Value("id")
-
-	db := g.DB()
-	one, err := db.Model("users").Where("id", 1).One()
-	if err != nil {
-		return nil, err
-	}
-
-	g.RequestFromCtx(ctx).Response.Writeln(v1.Res{
-		Code:    200,
-		Message: "success",
-		Data:    one})
+	//id := r.Get("id")
+	//db := g.DB()
+	//one, err := db.Model("users").Where("id", id).One()
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//g.RequestFromCtx(ctx).Response.Writeln(v1.Res{
+	//	Code:    200,
+	//	Message: "success",
+	//	Data:    one})
+	g.RequestFromCtx(ctx).Response.Writeln(ctx.Value("id"))
 	return
 }
 
@@ -56,16 +62,16 @@ func (c *cUser) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRe
 	return
 }
 
+// 用户删除
 func (c *cUser) Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error) {
-	db := g.DB()
 	id := req.Id
-	result, err := db.Model("users").Delete("id", id)
+
+	result, err := service.User().Delete(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	g.RequestFromCtx(ctx).Response.Writeln(v1.Res{
-		Code:    200,
-		Message: "success",
-		Data:    result})
+	res.Code = 0
+	res.Message = "删除成功"
+	res.Data = result
 	return
 }
